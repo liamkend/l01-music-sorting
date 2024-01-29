@@ -159,35 +159,32 @@ void MusicLibrary::get_options(int argc, char** argv) {
     // Don't display getopt error messages about options
     opterr = false;
 
-    /*
-
-        TODO: Add the remaining elements into the longOpts array.
-
-    */
-    // use getopt to find command line options
+    
     struct option longOpts[] = {{ "print", required_argument, nullptr, 'p' },
+                                {"name", no_argument, nullptr, 'n'},
+                                {"artists", no_argument, nullptr, 's'},
+                                {"listens", no_argument, nullptr, 'l'},
                                 { "help", no_argument, nullptr, 'h' },
                                 { nullptr, 0, nullptr, '\0' }};
     
-    /*
 
-        TODO: Add the remaining chars to the option string in
-                the while loop conditional (currently contains "p:h").
-                Options with required_argument (print) need a colon after the
-                char, options with no_argument do not (help).
-
-    */
-    while ((option = getopt_long(argc, argv, "p:h", longOpts, &option_index)) != -1) {
+    while ((option = getopt_long(argc, argv, "p:nalh", longOpts, &option_index)) != -1) {
         switch (option) {
             case 'p':
                 num_print = std::atoi(optarg);
                 break;
 
-            /*
+            case 'n':
+                policy = 'n';
+                break;
 
-                TODO: Add the remaining cases and decide what to do when they occur.
+            case 'a':
+                policy = 'a';
+                break;
 
-            */               
+            case 'l':
+                policy = 'l';
+                break;
 
             case 'h':
                 std::cout << "This program reads a CSV file that contains song names,\n"
@@ -305,11 +302,13 @@ void MusicLibrary::run() {
         std::sort(music.begin(), music.end(), Song::NameSort());
     }
 
-    /*
+    else if(policy == 'a') {
+        std::sort(music.begin(), music.end(), Song::ArtistSort());
+    }
 
-        TODO: Add the remaining sorting cases (sorting by artist and listens).
-
-    */
+    else if(policy == 'l') {
+        std::sort(music.begin(), music.end(), Song::ListensSort());
+    }
 
     // Print out the first num_print songs with the
     // overloaded stream insertion operator.   
